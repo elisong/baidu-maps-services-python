@@ -22,8 +22,8 @@ The author prepared the library just for occasional requirement from one of his 
 The library keeps almost the same inputs/outputs as official apis provides, except that:
 
 - only parse `json` outputs just now, NO support for `xml`.
-- default return is a simpler version of raw API callback. set 'raw=True' for complete raw json callback.
-- always use <lng, lat>, NOT <lat, lng> whenever you need.
+- default return is a simpler version of raw API callback. set `raw=True` for complete raw json callback.
+- always use `<lng, lat>`, NOT `<lat, lng>` whenever you need.
 
 >  Occationally, I met `Geoconv` API at the very beginning which fed on [lng, lat] coordinates order. Took it for granted, nothing surprise. Next, I wrapt `Place` API, it required [lat, lng], so I added transform processing, keeping pace with `Geoconv` API wrapper... How funny it is! All of raw apis, except `Geoconv`, supported [lat, lng] coordinates order!
 
