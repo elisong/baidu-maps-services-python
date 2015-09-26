@@ -113,7 +113,8 @@ are all valid and equal. argument `location`, similarly.
 
 #### place_eventsearch(query, event, region, bounds=None, location=None, **kwargs)
 ```python
->>> bdmaps.place_eventsearch(query='美食', event='groupon',region='北京', bounds='116.404,39.915,116.414,39.975')
+>>> bdmaps.place_eventsearch(query='美食', event='groupon',region='北京',
+                             bounds='116.404,39.915,116.414,39.975')
 ```
 
 #### place_eventdetail(uid, **kwargs)
@@ -136,8 +137,10 @@ no support for 2 uids or more in one request.
 
 #### direct(client, origin, destination, mode='driving', region=None, origin_region=None, destination_region=None, **kwargs)
 ```python
->>> bdmaps.direct(origin='清华大学', destination='北京大学', origin_region='北京', destination_region='北京')
->>> bdmaps.direct(origin='清华大学', destination='北京大学', region='北京', mode='transit')
+>>> bdmaps.direct(origin='清华大学', destination='北京大学',
+                  origin_region='北京', destination_region='北京')
+>>> bdmaps.direct(origin='清华大学', destination='北京大学',
+                  region='北京', mode='transit')
 ```
 
 - when `mode=None` or `mode='driving'`,`origin_region`, `destination_region` needed;
@@ -151,8 +154,10 @@ no support for 2 uids or more in one request.
 
 #### route_matrix(origins, destinations, **kwargs)
 ```python
->>> bdmaps.route_matrix(origins='114.21892734521,29.575429778924', destinations='115.21892734521,29.575429778924')
->>> bdmaps.route_matrix(origins='天安门|鸟巢', destinations='北京大学|东方明珠')
+>>> bdmaps.route_matrix(origins='114.21892734521,29.575429778924',
+                        destinations='115.21892734521,29.575429778924')
+>>> bdmaps.route_matrix(origins='天安门|鸟巢',
+                        destinations='北京大学|东方明珠')
 ```
 
 #### geoconv(coords, **kwargs)
