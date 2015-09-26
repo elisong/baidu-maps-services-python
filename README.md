@@ -1,4 +1,4 @@
-Python Client for Baidu Maps Web Services API
+Python Client for Baidu Maps Web Services
 =============================================
 
 ![image](./data/baidumaps.png)
