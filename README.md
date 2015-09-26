@@ -28,9 +28,11 @@ The library keeps almost the same inputs/outputs as official apis provides, exce
 >  Occationally, I met `Geoconv` API at the very beginning which fed on [lng, lat] coordinates order. Took it for granted, nothing surprise. Next, I wrapt `Place` API, it required [lat, lng], so I added transform processing, keeping pace with `Geoconv` API wrapper... How funny it is! All of raw apis, except `Geoconv`, supported [lat, lng] coordinates order!
 
 ## Installation
-
-    $ pip install -U googlemaps
-
+```sh
+$ git clone git@github.com:elisong/baidu-maps-services-python.git
+$ cd baidu-maps-services-python
+$ python setup.py install
+```
 Note the library was built under Ubuntu 14.04 LTS & Python 2.7.6.
 
 ## Simple Case
@@ -60,7 +62,9 @@ Before using Baidu Maps APIs services, read at least these official pages:
 ### Initialize Client
 ```python
 >>> import baidumaps
->>> bdmaps = baidumaps.Client(ak='<Your Baidu Auth Key>', domain='http://api.map.baidu.com', output='json')
+>>> bdmaps = baidumaps.Client(ak='<Your Baidu Auth Key>',
+                              domain='http://api.map.baidu.com',
+                              output='json')
 ```
 
 ### Choose API
