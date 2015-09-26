@@ -163,7 +163,8 @@ no support for 2 uids or more in one request.
 #### geoconv(coords, **kwargs)
 ```python
 >>> bdmaps.geoconv('114.21892734521,29.575429778924')
->>> bdmaps.geoconv([[114.21892734521, 29.575429778924], [114.21892734521, 29.575429778924]])
+>>> bdmaps.geoconv([[114.21892734521, 29.575429778924],
+                    [114.21892734521, 29.575429778924]])
 ```
 
 [baiduapis]: http://developer.baidu.com/map/index.php?title=webapi
