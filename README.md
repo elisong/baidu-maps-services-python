@@ -25,7 +25,7 @@ The library keeps almost the same inputs/outputs as official apis provides, exce
 - default return is a simpler version of raw API callback. set `raw=True` for complete raw json callback.
 - always use `<lng, lat>`, NOT `<lat, lng>` whenever you need.
 
->  Occationally, I met `Geoconv` API at the very beginning which fed on `<lng, lat>` coordinates order. Took it for granted, nothing surprise. Next, I wrapt `Place` API, it required `<lat, lng>`, so I added transform processing, keeping pace with `Geoconv` API wrapper... How funny it is! All of raw apis, except `Geoconv`, supported `<lat, lng>` coordinates order!
+>  Occationally, I met `Geoconv` API at the very beginning which fed on `<lng, lat>` coordinates order. Took it for granted, nothing surprise. Next, I wrapt Place API, it required `<lat, lng>`, so I added transform processing, keeping pace with `Geoconv` API wrapper... How funny it is! All of raw apis, except `Geoconv`, supported `<lat, lng>` coordinates order!
 
 ## Installation
 ```sh
