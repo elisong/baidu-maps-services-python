@@ -105,36 +105,36 @@ As for argument `bounds`,
 
 are all valid and equal. argument `location`, similarly.
 
-#### place_detail
+#### place_detail()
 ```pyton
 >>> bdmaps.place_detail(uid='8ee4560cf91d160e6cc02cd7')
 >>> bdmaps.place_detail(uids='8ee4560cf91d160e6cc02cd7;5ffb1816cf771a226f476058')
 ```
 
-#### place_eventsearch
+#### place_eventsearch()
 ```python
 >>> bdmaps.place_eventsearch(query='美食', event='groupon', region='北京',
                              bounds='116.404,39.915,116.414,39.975')
 ```
 
-#### place_eventdetail
+#### place_eventdetail()
 ```python
 >>> bdmaps.place_eventdetail(uid='8ee4560cf91d160e6cc02cd7')
 ```
 > no support for 2 uids or more in one request.
 
 
-#### place_suggest
+#### place_suggest()
 >>> bdmaps.place_suggest(query='天安门', region='北京')
 ```
 
-#### geocode
+#### geocode()
 ```python
 >>> bdmaps.geocode(address='百度大厦')
 >>> bdmaps.geocode(location='116.43213,38.76623')
 ```
 
-#### direct
+#### direct()
 ```python
 >>> bdmaps.direct(origin='清华大学', destination='北京大学',
                   origin_region='北京', destination_region='北京')
@@ -145,13 +145,13 @@ are all valid and equal. argument `location`, similarly.
 - when `mode=None` or `mode='driving'`,`origin_region`, `destination_region` needed;
 - when `mode='walking'` or `mode='transit'`,`region` needed;
 
-#### ip_locate
+#### ip_locate()
 ```python
 >>> bdmaps.ip_locate()
 >>> bdmaps.ip_locate(ip='202.198.16.3')
 ```
 
-#### route_matrix
+#### route_matrix()
 ```python
 >>> bdmaps.route_matrix(origins='114.21892734521,29.575429778924',
                         destinations='115.21892734521,29.575429778924')
@@ -159,7 +159,7 @@ are all valid and equal. argument `location`, similarly.
                         destinations='北京大学|东方明珠')
 ```
 
-#### geoconv
+#### geoconv()
 ```python
 >>> bdmaps.geoconv('114.21892734521,29.575429778924')
 >>> bdmaps.geoconv([[114.21892734521, 29.575429778924],
