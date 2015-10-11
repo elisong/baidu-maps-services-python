@@ -89,7 +89,7 @@ A base url usually conbined by `domain`(域名)+ `server_name`(服务名)+`versi
 - version: v2
 - subserver_name: search
 
-#### place_search(query, region=None, bounds=None, location=None, **kwargs)
+#### place_search()
 ```python
 >>> bdmaps.place_search(query='银行', region='北京')
 >>> bdmaps.place_search(query='银行', bounds='116.404,39.915,116.414,39.975')
@@ -105,37 +105,36 @@ As for argument `bounds`,
 
 are all valid and equal. argument `location`, similarly.
 
-#### place_detail(uid=None, uids=None, **kwargs)
+#### place_detail
 ```pyton
 >>> bdmaps.place_detail(uid='8ee4560cf91d160e6cc02cd7')
 >>> bdmaps.place_detail(uids='8ee4560cf91d160e6cc02cd7;5ffb1816cf771a226f476058')
 ```
 
-#### place_eventsearch(query, event, region, bounds=None, location=None, **kwargs)
+#### place_eventsearch
 ```python
->>> bdmaps.place_eventsearch(query='美食', event='groupon',region='北京',
+>>> bdmaps.place_eventsearch(query='美食', event='groupon', region='北京',
                              bounds='116.404,39.915,116.414,39.975')
 ```
 
-#### place_eventdetail(uid, **kwargs)
+#### place_eventdetail
 ```python
 >>> bdmaps.place_eventdetail(uid='8ee4560cf91d160e6cc02cd7')
 ```
-no support for 2 uids or more in one request.
+> no support for 2 uids or more in one request.
 
 
-#### place_suggest(query, region, **kwargs)
-```python
+#### place_suggest
 >>> bdmaps.place_suggest(query='天安门', region='北京')
 ```
 
-#### geocode(address=None, location=None, **kwargs)
+#### geocode
 ```python
 >>> bdmaps.geocode(address='百度大厦')
 >>> bdmaps.geocode(location='116.43213,38.76623')
 ```
 
-#### direct(client, origin, destination, mode='driving', region=None, origin_region=None, destination_region=None, **kwargs)
+#### direct
 ```python
 >>> bdmaps.direct(origin='清华大学', destination='北京大学',
                   origin_region='北京', destination_region='北京')
@@ -146,13 +145,13 @@ no support for 2 uids or more in one request.
 - when `mode=None` or `mode='driving'`,`origin_region`, `destination_region` needed;
 - when `mode='walking'` or `mode='transit'`,`region` needed;
 
-#### ip_locate(ip=None, **kwargs)
+#### ip_locate
 ```python
 >>> bdmaps.ip_locate()
 >>> bdmaps.ip_locate(ip='202.198.16.3')
 ```
 
-#### route_matrix(origins, destinations, **kwargs)
+#### route_matrix
 ```python
 >>> bdmaps.route_matrix(origins='114.21892734521,29.575429778924',
                         destinations='115.21892734521,29.575429778924')
@@ -160,7 +159,7 @@ no support for 2 uids or more in one request.
                         destinations='北京大学|东方明珠')
 ```
 
-#### geoconv(coords, **kwargs)
+#### geoconv
 ```python
 >>> bdmaps.geoconv('114.21892734521,29.575429778924')
 >>> bdmaps.geoconv([[114.21892734521, 29.575429778924],
