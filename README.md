@@ -103,7 +103,7 @@ As for argument `bounds`,
 - '116.404,39.915|116.414,39.975'
 - [[116.404, 39.915], [116.414, 39.975]]
 
-are all valid and equal. argument `location`, similarly.
+all are valid and equal. argument `location`, similarly.
 
 #### place_detail()
 ```pyton
@@ -121,10 +121,10 @@ are all valid and equal. argument `location`, similarly.
 ```python
 >>> bdmaps.place_eventdetail(uid='8ee4560cf91d160e6cc02cd7')
 ```
-> no support for 2 uids or more in one request.
-
+No support for 2 uids or more in one request.
 
 #### place_suggest()
+```python
 >>> bdmaps.place_suggest(query='天安门', region='北京')
 ```
 
@@ -141,7 +141,6 @@ are all valid and equal. argument `location`, similarly.
 >>> bdmaps.direct(origin='清华大学', destination='北京大学',
                   region='北京', mode='transit')
 ```
-
 - when `mode=None` or `mode='driving'`,`origin_region`, `destination_region` needed;
 - when `mode='walking'` or `mode='transit'`,`region` needed;
 
@@ -176,7 +175,6 @@ are all valid and equal. argument `location`, similarly.
 [Geoconv API]: http://developer.baidu.com/map/index.php?title=webapi/guide/changeposition
 [googleapis]: https://github.com/googlemaps/google-maps-services-python
 [application link]: http://lbsyun.baidu.com/apiconsole/key?application=key
-
 [gaishu]: http://developer.baidu.com/map/index.php?title=webapi
 [tiaokuan]: http://developer.baidu.com/map/index.php?title=open/law
 [xuzhi]: http://developer.baidu.com/map/index.php?title=open/question
