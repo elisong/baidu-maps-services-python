@@ -141,8 +141,8 @@ No support for 2 uids or more in one request.
 >>> bdmaps.direct(origin='清华大学', destination='北京大学',
                   region='北京', mode='transit')
 ```
-- when `mode=None` or `mode='driving'`,`origin_region`, `destination_region` needed;
-- when `mode='walking'` or `mode='transit'`,`region` needed;
+- When setting `mode=None` or `mode='driving'`,`origin_region`, then `destination_region` is necessary;
+- When setting `mode='walking'` or `mode='transit'`, then `region` is necessary;
 
 #### ip_locate()
 ```python
