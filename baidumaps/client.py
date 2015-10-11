@@ -11,9 +11,6 @@
 import urllib
 import requests
 import re
-# import sys
-# sys.path.append("/home/eli/Github/baidumaps")
-
 import baidumaps
 from baidumaps import apis
 from baidumaps import exceptions
@@ -21,10 +18,14 @@ from baidumaps import parse
 
 
 class Client(object):
-    def __init__(self, ak, domain='http://api.map.baidu.com', output='json'):
+    def __init__(self, ak=None, domain='http://api.map.baidu.com',
+                 output='json'):
         if not ak:
-            raise ValueError("您需先申请密钥（ak），请移步如下页面: http://lbsyun.\
-                             baidu.com/apiconsole/key")
+            raise ValueError("Must provide API when creating client. Refer to\
+                             the link: http://lbsyun.baidu.com/apiconsole/key")
+
+        if ak and re.search(r'^[a-zA-Z0-9]+$', ak):
+            raise ValueError('Invalid ak(API key)!')
 
         self.ak = ak
         self.domain = domain
@@ -51,7 +52,7 @@ class Client(object):
                             params['version'],
                             params['subserver_name']]
                             ) + '?'
-        base_url = re.sub(r'//i', '/i', base_url)   # for ip_locate()
+        base_url = re.sub(r'//ip', '/ip', base_url)   # for ip_locate()
 
         temp = params.copy()    # avoid altering argument 'params'
         {temp.pop(key) for key in ['server_name', 'version', 'subserver_name']}
