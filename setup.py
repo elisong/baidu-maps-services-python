@@ -12,7 +12,7 @@
 from setuptools import setup, find_packages
 
 setup(name='baidumaps',
-      version='1.0-beta',
+      version='0.1',
       description='Python client library for Baidu Maps API Web Services',
       author='Eli Song',
       author_email='elisong.ah@gmail.com',
