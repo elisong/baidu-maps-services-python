@@ -96,7 +96,7 @@ A base url usually conbined by `domain`(域名)+ `server_name`(服务名)+`versi
 >>> bdmaps.place_search(query='银行', location='116.404,39.915')
 ```
 
-For argument `bounds`, these style are permitted:
+For argument `bounds`, the followings are permitted:
 
 - `'116.404,39.915,116.414,39.975'`
 - `'116.404,39.915;116.414,39.975'`
