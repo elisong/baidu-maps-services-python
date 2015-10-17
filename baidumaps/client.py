@@ -24,7 +24,7 @@ class Client(object):
             raise ValueError("Must provide API when creating client. Refer to\
                              the link: http://lbsyun.baidu.com/apiconsole/key")
 
-        if ak and re.search(r'^[a-zA-Z0-9]+$', ak):
+        if ak and not re.search(r'^[a-zA-Z0-9]+$', ak):
             raise ValueError('Invalid ak(API key)!')
 
         self.ak = ak
