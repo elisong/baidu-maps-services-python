@@ -106,7 +106,7 @@ For argument `bounds`, the followings are permitted:
 As for `location`, likewise.
 
 #### place_detail()
-```pyton
+```python
 >>> bdmaps.place_detail(uid='8ee4560cf91d160e6cc02cd7')
 >>> bdmaps.place_detail(uids='8ee4560cf91d160e6cc02cd7;5ffb1816cf771a226f476058')
 ```
