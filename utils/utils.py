@@ -8,7 +8,31 @@
 
 # THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from baidumaps.client import Client
-# import baidumaps.exceptions
-# import baidumaps.parse
-# import baidumaps.apis
+import os
+import json
+import bs4
+try:
+    from urllib.request import urlopen
+except ImportError:
+    from urllib2 import urlopen
+
+
+d = os.path.dirname(__file__)
+par_d = os.path.join(d, '..')
+
+def get_status_code(url='http://lbsyun.baidu.com/index.php?title=webapi/appendix')
+    response = urlopen(url)
+    data = response.read()
+    soup = bs4.BeautifulSoup(data, 'lxml')
+
+    status_code = {}
+    tab = soup.table
+    for ta in tab:
+        if isinstance(ta, bs4.element.Tag) and ta.find('td'):
+            row = [tdh.string.strip() if tdh.string else None for tdh in ta.findAll('td')]
+            status_code.update({row[0]: row[1]})
+
+    with open(os.path.join(par_d, 'data/status_code.json'), 'w') as f: 
+        json.dump(status_code, f)
+    return 1 if status_code else 0
+

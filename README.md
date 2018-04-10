@@ -1,7 +1,7 @@
 Python Client for Baidu Maps Web Services
 =============================================
 
-![image](./data/baidumaps.png)
+![image](./images/baidumaps.png)
 
 ## Descriptions
 
@@ -77,7 +77,10 @@ Before using Baidu Maps APIs services, read at least these official pages:
 ||http://api.map.baidu.com/place/v2/eventdetail|place_eventdetail|
 |[Place Suggestion API]|http://api.map.baidu.com/place/v2/suggestion|place_suggest|
 |[Geocoding API]|http://api.map.baidu.com/geocoder/v2/|geocode|
-|[Direction API]|http://api.map.baidu.com/direction/v1|direct|
+|[Direction API]|http://api.map.baidu.com/direction/**v1**|direct(mode='walking')|
+||http://api.map.baidu.com/direction/v2/transit|direct(mode='transit')|
+||http://api.map.baidu.com/direction/v2/riding|direct(mode='riding')|
+||http://api.map.baidu.com/direction/v2/driving|direct(mode='driving')|
 |[Route Matrix API]|http://api.map.baidu.com/direction/v1/routematrix|route_matrix|
 |[IP Location API]|http://api.map.baidu.com/location/ip|ip_locate|
 |[Geoconv API]|http://api.map.baidu.com/geoconv/v1|geoconv|
@@ -165,7 +168,7 @@ No support for 2 uids or more in one request.
                     [114.21892734521, 29.575429778924]])
 ```
 
-[baiduapis]: http://developer.baidu.com/map/index.php?title=webapi
+[baiduapis]: http://lbsyun.baidu.com/index.php?title=%E9%A6%96%E9%A1%B5
 [Place API]: http://developer.baidu.com/map/index.php?title=webapi/guide/webservice-placeapi
 [Place Suggestion API]: http://developer.baidu.com/map/index.php?title=webapi/place-suggestion-api
 [Geocoding API]: http://developer.baidu.com/map/index.php?title=webapi/guide/webservice-geocoding
@@ -179,3 +182,13 @@ No support for 2 uids or more in one request.
 [tiaokuan]: http://developer.baidu.com/map/index.php?title=open/law
 [xuzhi]: http://developer.baidu.com/map/index.php?title=open/question
 [aklink]: http://lbsyun.baidu.com/apiconsole/key?application=key
+
+
+## Change log
+
+### v0.2.0(2018/04/05)
+
+- 添加ak的sn签名的验证方式
+- 添加xml原始结果返回
+- 路线规划服务（Direction API）中mode=['driving', 'transit', 'riding']更新为v2版
+- 批量算路服务（Route Matrix API）更新为v2版
