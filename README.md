@@ -192,3 +192,5 @@ No support for 2 uids or more in one request.
 - 添加xml原始结果返回
 - 路线规划服务（Direction API）中mode=['driving', 'transit', 'riding']更新为v2版
 - 批量算路服务（Route Matrix API）更新为v2版
+- 修正 纬度在前，经度在后的表达习惯
+- 删除 place_eventsearch, place_eventdetail， 官方文档里没有了

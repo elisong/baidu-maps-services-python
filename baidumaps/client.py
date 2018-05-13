@@ -36,15 +36,14 @@ class Client(object):
         self.output = output
         self.s = requests.Session()
 
-    def get(self, params):
-        request_url = self._generate_url(params)
-        response = self.s.get(request_url)
-        response.status_code
+    def _get(self, params):
+        url = self._generate_url(params)
+        response = self.s.get(url)
+        status_code = response.status_code
 
 
-
-        request_url = self._generate_url(params)
-        response = self.s.get(request_url).json()
+        url = self._generate_url(params)
+        response = self.s.get(url).json()
 
         status = response['status']
         server_name = params['server_name']
@@ -64,7 +63,7 @@ class Client(object):
         api = re.sub(r'//ip', '/ip', api)  # for ip_locate()
         temp = params.copy()
         {temp.pop(key) for key in ['server_name', 'version', 'subserver_name']}
-        temp.update({'output': self.output, 'ak': self.ak})
+        temp.update({'output': params.get('output', self.output), 'ak': self.ak})
         query = api + urlencode(temp)
         if self.sk:
             quoted = quote(query, safe="/:=&?#+!$,;'@()*[]") + self.sk

@@ -36,3 +36,6 @@ def get_status_code(url='http://lbsyun.baidu.com/index.php?title=webapi/appendix
         json.dump(status_code, f)
     return 1 if status_code else 0
 
+def get_city_code():
+    pass
+

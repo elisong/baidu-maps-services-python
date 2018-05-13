@@ -8,8 +8,10 @@
 
 # THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from bs4 import BeautifulSoup
 
-def parse(client, server_name, subserver_name, response):
+
+def parse(client, server_name, subserver_name, response, output):
     name = server_name + subserver_name
     options = {'geoconv': parse_gcv,
                'directionroutematrix': parse_drx,
@@ -26,12 +28,33 @@ def parse(client, server_name, subserver_name, response):
     return options[name](response)
 
 
-def parse_gcv(response):
-    result_raw = response['result']
-    if len(result_raw) > 1:
-        result_parse = [{'lng': rr['x'], 'lat': rr['y']} for rr in result_raw]
+def xml2json(xml, tag='result'):
+    from bs4 import BeautifulSoup
+    import json
+    soup = BeautifulSoup(xml, 'xml')
+    json.loads(soup.tag)
+
+
+
+
+
+
+def parse_gcv(response, output):
+    if output == 'xml':
+        result_raw = response.text
+        soup = BeautifulSoup(result_raw, 'xml')
+        points = soup.findAll('point')
+        if len(points) > 1:
+            result_parse = [{'lng': point.x.text, 'lat': point.y.text} for point in points]
+        else:
+            result_parse = {'lng': points[0].x.text, 'lat': points[0].y.text}
     else:
-        result_parse = {'lng': result_raw[0]['x'], 'lat': result_raw[0]['y']}
+        result_raw = response.json()
+        points = result_raw['result']
+        if len(points) > 1:
+            result_parse = [{'lng': point['x'], 'lat': point['y']} for point in points]
+        else:
+            result_parse = {'lng': points[0]['x'], 'lat': points[0]['y']}
     return result_parse
 
 
