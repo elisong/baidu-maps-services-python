@@ -10,39 +10,6 @@
 
 import re
 
-def simple2str(x, name, len_expect_l=2, len_expect_r=2):
-    sep_pattern = re.compile(r'[,;|]')
-
-    if isinstance(x, str):
-        x = sep_pattern.split(x)
-    elif isinstance(x, list) or isinstance(x, tuple):
-        if isinstance(x[0], list) or isinstance(x[0], tuple):
-            x = [val for sub in x for val in sub]
-    else:
-        raise ValueError("'{}' should be 'str', 'list' or 'tuple' instance.".format(name))
-
-    if len(x) >= len_expect_l and len(x) <= len_expect_r:
-        return ','.join([str(i).strip() for i in x])
-    else:
-        return None
-
-def complex2str(x, name, len_expect_l=2, len_expect_r=2):
-    sep_pattern = re.compile(r'[,;|]')
-
-    if isinstance(x, str):
-        x = sep_pattern.split(x)
-    elif isinstance(x, list) or isinstance(x, tuple):
-        if isinstance(x[0], list) or isinstance(x[0], tuple):
-            x = [val for sub in x for val in sub]
-    else:
-        raise ValueError("'{}' should be 'str', 'list' or 'tuple' instance.".format(name))
-
-    if len(x) >= len_expect_l and len(x) <= len_expect_r:
-        tmp = [','.join(x[(2*i):(2*i+2)]) for i in range(0, int(len(x)/2))]
-        return '|'.join(tmp)
-    else:
-        return None
-
 def ip_check(ip):
     IP4_pattern = re.compile(r"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$")
     IP6_pattern = re.compile(r"^(?:[A-F0-9]{1,4}:){7}[A-F0-9]{1,4}$")
@@ -52,4 +19,21 @@ def ip_check(ip):
     else:
         pass
 
+def conv2str(x, name, len_expect_l=1, len_expect_r=1, sep=',', reverse=False):
+    seps = re.compile(r'[,;|]')
 
+    if isinstance(x, str):
+        x = seps.split(x)
+        x = list(zip(x[0::2], x[1::2]))
+    elif isinstance(x, (list, tuple)):
+        if isinstance(x[0], str) or isinstance(x[0], float):
+            x = list(zip(x[0::2], x[1::2]))
+    else:
+        raise ValueError("'{}' should be 'str', 'list' or 'tuple' instance.".format(name))
+
+    if len(x) >= len_expect_l and len(x) <= len_expect_r and not reverse:
+        return sep.join([str(lat).strip()+','+str(lng).strip() for lat, lng in x])
+    elif len(x) >= len_expect_l and len(x) <= len_expect_r and reverse:
+        return sep.join([str(lng).strip()+','+str(lat).strip() for lat, lng in x])
+    else:
+        return None

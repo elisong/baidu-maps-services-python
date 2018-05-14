@@ -8,7 +8,7 @@
 
 # THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from convert import simple2str, ip_check
+from convert import conv2str, ip_check
 
 def place_search(client, query, region=None, location=None, bounds=None, **kwargs):
     """Returns general geographic information. 
@@ -43,7 +43,7 @@ def place_search(client, query, region=None, location=None, bounds=None, **kwarg
     elif region:
         kwargs['region'] = region.strip()
     elif location:
-        conv_loc = simple2str(location, 'location')
+        conv_loc = conv2str(location, 'location')
         if not conv_loc:
             raise ValueError("'location' incorrect! May as follows:\
                 \nlocation = '39.915,116.404'\
@@ -53,7 +53,7 @@ def place_search(client, query, region=None, location=None, bounds=None, **kwarg
                 \nlocation = (39.915, 116.404)")
         kwargs['location'] = conv_loc
     else:
-        conv_bou = simple2str(bounds, 'location', 4, 4)
+        conv_bou = conv2str(bounds, 'location', 2, 2)
         if not conv_bou:
             raise ValueError("'bounds' incorrect! May as follows:\
                 \nbounds = '39.915,116.404,39.975,116.414'\
@@ -93,7 +93,7 @@ def place_detail(client, uid=None, uids=None, **kwargs):
     elif uid:
         kwargs['uid'] = uid.strip()
     else:
-        conv_uids = simple2str(uids, 'location', 2, 10)
+        conv_uids = conv2str(uids, 'location', 1, 5)
         if not conv_uids:
             raise ValueError("'uids' incorrect! May as follows:\
                 \nuids = '8ee4560cf91d160e6cc02cd7,5ffb1816cf771a226f476058'\
@@ -126,7 +126,7 @@ def place_suggest(client, query, region, **kwargs):
         raw callback, xml or json if setting 'raw=True'.
     """
     if 'location' in kwargs:
-        conv_loc = simple2str(kwargs['location'], 'location')
+        conv_loc = conv2str(kwargs['location'], 'location')
         if not conv_loc:
             raise ValueError("'location' incorrect! May as follows:\
                 \nlocation = '39.915,116.404'\
@@ -190,7 +190,7 @@ def direct(client, origin, destination, mode='driving', region=None, **kwargs):
     :rtype: parsed result defiend in Parser, list or dict, default.
         raw callback, xml or json if setting 'raw=True'.
     """
-    conv_ori = simple2str(origin, 'origin')
+    conv_ori = conv2str(origin, 'origin')
     if not conv_ori:
         raise ValueError("'origin' incorrect! May as follows:\
             \norigin = '39.915,116.404'\
@@ -200,7 +200,7 @@ def direct(client, origin, destination, mode='driving', region=None, **kwargs):
             \norigin = (39.915, 116.404)")
     kwargs['origin'] = conv_ori
 
-    conv_des = simple2str(destination, 'destination')
+    conv_des = conv2str(destination, 'destination')
     if not conv_ori:
         raise ValueError("'destination' incorrect! May as follows:\
             \ndestination = '39.915,116.404'\
@@ -265,7 +265,7 @@ def route_matrix(client, origins, destinations, mode='driving', **kwargs):
     :rtype: parsed result defiend in Parser, list or dict, default.
         raw callback, xml or json if setting 'raw=True'.
     """
-    conv_oris = complex2str(origins, 'origins', 2, 100)
+    conv_oris = conv2str(origins, 'origins', 1, 50, '|')
     if not conv_oris:
         raise ValueError("'origins' incorrect! May as follows:\
                 \norigins = '39.915,116.404,39.975,116.414'\
@@ -275,7 +275,7 @@ def route_matrix(client, origins, destinations, mode='driving', **kwargs):
                 \norigins = ((39.915, 116.404), (39.975, 116.414))")
     kwargs['origins'] = conv_oris
 
-    conv_dess = complex2str(destinations, 'destinations', 2, 100)
+    conv_dess = conv2str(destinations, 'destinations', 1, 50, '|')
     if not conv_dess:
         raise ValueError("'destinations' incorrect! May as follows:\
                 \ndestinations = '39.915,116.404,39.975,116.414'\
@@ -295,37 +295,30 @@ def route_matrix(client, origins, destinations, mode='driving', **kwargs):
     return client._get(kwargs)
 
 def geoconv(client, coords, **kwargs):
-    """This module converts coords from some standard type to another. For
-    more details, please refer to Baidu's official description.
+    """Convert none-Baidu coordinate to Baidu's. 
 
-    Attention! You should always use <lng, lat>, NOT <lat, lng> whenever you
-    need. It will be converted to <lat, lng> if raw API requires.
-    Moreover, default return is a simpler version of raw API callback, of
-    course, you can set 'raw=True' for complete raw json callback.
+    More details is available here:
+    http://lbsyun.baidu.com/index.php?title=webapi/guide/changeposition
 
-    Reference: http://lbsyun.baidu.com/index.php?title=webapi/guide/changeposition
+    :param coords: lat & lng pairs, e.g. '39.915,116.404,39.975,116.414'.
+    :type coords: string, list/tuple of list/tuple
+
+    :param **kwargs: optional parameters, e.g. output='json'.
+    :type **kwargs: <key>=<value>
+
+    :rtype: parsed result defiend in Parser, list or dict, default.
+        raw callback, xml or json if setting 'raw=True'.
     """
-
-    sep_pattern = re.compile(r'[,;|]')
-    is_str = isinstance(coords, str)
-    is_list = isinstance(coords, list)
-
-    if not any([is_str, is_list]):
-        raise ValueError('"coords" must be str or list!')
-    elif is_str:
-        flat_co = sep_pattern.split(coords)
-    elif is_list and isinstance(coords[0], list):
-        flat_co = [str(c) for co in coords for c in co]
-    else:
-        flat_co = map(str, coords)
-
-    if len(flat_co) > 200:
-        raise ValueError('"coords" incorrect! upper limits is 100.')
-    else:
-        iter_co = iter(flat_co)
-        coords = ';'.join([','.join(ic) for ic in zip(iter_co, iter_co)])
+    conv_coos = conv2str(coords, 'coords', 1, 10000, ';')
+    if not conv_oris:
+        raise ValueError("'coords' incorrect! May as follows:\
+                \ncoords = '39.915,116.404,39.975,116.414'\
+                \ncoords = '39.915,116.404;39.975,116.414'\
+                \ncoords = '39.915,116.404|39.975,116.414'\
+                \ncoords = [[39.915, 116.404], [39.975, 116.414]]\
+                \ncoords = ((39.915, 116.404), (39.975, 116.414))")
 
     kwargs.update({'server_name': 'geoconv', 'version': 'v1',
-                  'subserver_name': '', 'coords': coords})
+                  'subserver_name': '', 'coords': conv_coos})
 
     return client._get(kwargs)
