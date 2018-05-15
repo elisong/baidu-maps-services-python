@@ -322,3 +322,59 @@ def geoconv(client, coords, **kwargs):
                   'subserver_name': '', 'coords': conv_coos})
 
     return client._get(kwargs)
+
+def time_zone(client, location, timestamp, **kwargs):
+    """Return time zone of given location and offset.
+
+    More details is available here:
+    http://lbsyun.baidu.com/index.php?title=webapi/guide/timezone
+
+    :param location: lat & lng pair, e.g. '39.915,116.404'.
+    :type location: string, list, tuple
+
+    :param **kwargs: optional parameters, e.g. output='json'.
+    :type **kwargs: <key>=<value>
+
+    :rtype: parsed result defiend in Parser, list or dict, default.
+        raw callback, xml or json if setting 'raw=True'.
+    """
+    conv_loc = conv2str(location, 'location')
+    if not conv_loc:
+        raise ValueError("'location' incorrect! May as follows:\
+            \nlocation = '39.915,116.404'\
+            \nlocation = '39.915;116.404'\
+            \nlocation = '39.915|116.404'\
+            \nlocation = [39.915, 116.404]\
+            \nlocation = (39.915, 116.404)")
+    kwargs.update({'server_name': 'timezone', 'version': 'v1', 'subserver_name': '',
+                   'location': conv_loc, 'timestamp': timestamp})
+
+    return client._get(kwargs)
+
+def boarding_point(client, location, timestamp, **kwargs):
+    """Return recommendatory boarding point of given location.
+
+    More details is available here:
+    http://lbsyun.baidu.com/index.php?title=webapi/parking-api
+
+    :param location: lat & lng pair, e.g. '39.915,116.404'.
+    :type location: string, list, tuple
+
+    :param **kwargs: optional parameters, e.g. output='json'.
+    :type **kwargs: <key>=<value>
+
+    :rtype: parsed result defiend in Parser, list or dict, default.
+        raw callback, xml or json if setting 'raw=True'.
+    """
+    conv_loc = conv2str(location, 'location')
+    if not conv_loc:
+        raise ValueError("'location' incorrect! May as follows:\
+            \nlocation = '39.915,116.404'\
+            \nlocation = '39.915;116.404'\
+            \nlocation = '39.915|116.404'\
+            \nlocation = [39.915, 116.404]\
+            \nlocation = (39.915, 116.404)")
+    kwargs.update({'server_name': 'parking', 'version': '', 'subserver_name': 'search',
+                   'location': conv_loc})
+
+    return client._get(kwargs)
