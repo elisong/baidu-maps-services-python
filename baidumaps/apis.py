@@ -35,7 +35,6 @@ def place_search(client, query, region=None, location=None, bounds=None, **kwarg
 
     :rtype: parsed result defiend in Parser, list or dict, default.
         raw callback, xml or json if setting 'raw=True'.
-    
     """
     if not any([region, location, bounds]):
         raise ValueError("Assigns one and only one of arguments:\

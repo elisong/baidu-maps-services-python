@@ -25,11 +25,8 @@ class Client(object):
     def __init__(self, ak=None, sk=None, domain='http://api.map.baidu.com',
                  output='json'):
         if not ak:
-            raise ValueError("Must provide API when creating client. Refer to\
-                             the link: http://lbsyun.baidu.com/apiconsole/key")
-
-        if ak and not re.search(r'^[a-zA-Z0-9]+$', ak):
-            raise ValueError('Invalid ak(API key)!')
+            raise ValueError("Must provide API when creating client. Refer to:\
+                             \nthe link: http://lbsyun.baidu.com/apiconsole/key")
 
         self.ak = ak
         self.domain = domain

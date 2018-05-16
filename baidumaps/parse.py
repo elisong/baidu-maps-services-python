@@ -8,7 +8,56 @@
 
 # THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from bs4 import BeautifulSoup
+import xml.etree.ElementTree as ET
+from collections import defaultdict
+import pandas as pd
+
+
+def parse_json(response):
+    return pd.DataFrame(response.json()['results'])
+
+def parse_xml(response):
+    records = []
+    root = ET.fromstring(response.text)
+    for parent in root.iter('result'):
+        record = {}
+        for key_val in iter_tree(parent):
+            record.update(key_val)
+        records.append(record)
+    return pd.DataFrame(records)
+
+def iter_tree(parent):
+    for son in parent:
+        if len(son):
+            iter_tree(son)
+        else:
+            yield({son.tag:son.text.strip()})
+
+def parse_xml2(response):
+    records = []
+    root = ET.fromstring(response.text)
+    for parent in root.iter('result'):
+        for son in parent:
+            if len(son):
+                parent.extend(son)
+            else:
+                parent.extend(son)
+
+
+        record = defaultdict()
+        iter_tree2(parent)
+        records.append(record)
+    return pd.DataFrame(records)
+
+def iter_tree2(parent, ddict):
+    for son in parent:
+        if len(son):
+            iter_tree(son, ddict)
+        else:
+            ddict[son.tag] = son.text.strip()
+    return ddict
+
+
 
 
 def parse(client, server_name, subserver_name, response, output):
@@ -28,11 +77,6 @@ def parse(client, server_name, subserver_name, response, output):
     return options[name](response)
 
 
-def xml2json(xml, tag='result'):
-    from bs4 import BeautifulSoup
-    import json
-    soup = BeautifulSoup(xml, 'xml')
-    json.loads(soup.tag)
 
 
 
@@ -175,3 +219,37 @@ def parse_peh(response):
 def parse_pel(response):
     result_parse = response['result']
     return result_parse
+
+
+if __name__ == '__main__':
+    
+    urls=["http://api.map.baidu.com/place/v2/search?query=ATM机&tag=银行&region=北京",
+         "http://api.map.baidu.com/place/v2/search?query=银行&location=39.915,116.404&radius=2000",
+         "http://api.map.baidu.com/place/v2/search?query=银行&bounds=39.915,116.404,39.975,116.414",
+         "http://api.map.baidu.com/place/v2/detail?uid=5a8fb739999a70a54207c130&scope=2",
+         "http://api.map.baidu.com/place/v2/suggestion?query=天安门&region=北京&city_limit=true",
+         "http://api.map.baidu.com/geocoder/v2/?address=北京市海淀区上地十街10号",
+         "http://api.map.baidu.com/direction/v2/transit?origin=40.056878,116.30815&destination=31.222965,121.505821",
+         "http://api.map.baidu.com/direction/v2/riding?origin=40.01116,116.339303&destination=39.936404,116.452562",
+         "http://api.map.baidu.com/direction/v2/driving?origin=40.01116,116.339303&destination=39.936404,116.452562",
+         "http://api.map.baidu.com/routematrix/v2/driving?origins=40.45,116.34|40.54,116.35&destinations=40.34,116.45|40.35,116.46",
+         "http://api.map.baidu.com/location/ip?",
+         "http://api.map.baidu.com/parking/search?location=116.313064,40.048541&coordtype=bd09ll",
+         "http://api.map.baidu.com/geoconv/v1/?coords=114.21892734521,29.575429778924&from=1&to=5"]
+
+    ak="GuMrViec3jLp1WCG4P3VLDlC"
+
+    import requests 
+    s = requests.Session()
+
+    for i, url in enumerate(urls):
+        print('--------------------- Order:',i+1, 'URL:', url)
+        for x in ['xml', 'json']:
+            url = url+'&ak='+ak+'&output='+x
+            res = s.get(url)
+            if x =='xml':
+                df = parse_xml(res)
+            else:
+                df = parse_json(res)
+            print('---------------------PARSER: ', x)
+            print(df)
