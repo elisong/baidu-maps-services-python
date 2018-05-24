@@ -9,9 +9,9 @@
 # THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import xml.etree.ElementTree as ET
+
 from collections import defaultdict
 import pandas as pd
-
 
 def parse_json(response):
     records = []
@@ -221,12 +221,18 @@ if __name__ == '__main__':
                     iter_dct(val)
                 else:
                     ddct[key] = val
-        try:
+        if 'results' in jso:
             dct_list = jso['results']
-        except KeyError:
+        elif 'result' in jso:
             dct_list = jso['result']
-            if isinstance(dct_list, dict):
-                dct_list = [dct_list]
+        elif 'recommendStops' in jso:
+            dct_list = jso['recommendStops']
+        elif 'content' in jso:
+            dct_list = jso['content']
+        else:
+            dct_list = jso
+        if isinstance(dct_list, dict):
+            dct_list = [dct_list]
 
         for dct in dct_list:
             iter_dct(dct)
@@ -236,7 +242,10 @@ if __name__ == '__main__':
 
     def parse_xml(response):
         records = []
-        root = ET.fromstring(response.text)
+        try:
+            root = ET.fromstring(response.text)
+        except :
+            return parse_json(response)
         ddct = defaultdict(str)
         def iter_tree(parent):
             for son in parent:
@@ -260,9 +269,10 @@ if __name__ == '__main__':
          "http://api.map.baidu.com/direction/v2/riding?origin=40.01116,116.339303&destination=39.936404,116.452562",
          "http://api.map.baidu.com/direction/v2/driving?origin=40.01116,116.339303&destination=39.936404,116.452562",
          "http://api.map.baidu.com/routematrix/v2/driving?origins=40.45,116.34|40.54,116.35&destinations=40.34,116.45|40.35,116.46",
-         "http://api.map.baidu.com/location/ip?",
+         "http://api.map.baidu.com/location/ip?ip=220.112.125.166",
          "http://api.map.baidu.com/parking/search?location=116.313064,40.048541&coordtype=bd09ll",
-         "http://api.map.baidu.com/geoconv/v1/?coords=114.21892734521,29.575429778924&from=1&to=5"]
+         "http://api.map.baidu.com/geoconv/v1/?coords=114.21892734521,29.575429778924&from=1&to=5",
+          "http://api.map.baidu.com/timezone/v1?coord_type=wgs84ll&location=-36.52,174.46&timestamp=1473130354"]
 
     ak="GuMrViec3jLp1WCG4P3VLDlC"
 
@@ -274,7 +284,7 @@ if __name__ == '__main__':
             url_ = url+'&ak='+ak+'&output='+x
             print('--------------------- URL:', url_)
             res = s.get(url_)
-            if x =='xml':
+            if x =='xml' and 'ip' not in url_:
                 df = parse_xml(res)
             else:
                 df = parse_json(res)

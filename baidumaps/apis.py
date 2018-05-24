@@ -8,11 +8,10 @@
 
 # THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from convert import conv2str, ip_check
+from .convert import conv2str, ip_check
 
 def place_search(client, query, region=None, location=None, bounds=None, **kwargs):
-    """Returns general geographic information. 
-
+    """Returns general geographic information.
     Assigns one and only one of arguments: 'region', 'bounds', 'location' 
     for different searching types. More details is available here:
     http://lbsyun.baidu.com/index.php?title=webapi/guide/webservice-placeapi.
@@ -63,13 +62,11 @@ def place_search(client, query, region=None, location=None, bounds=None, **kwarg
         kwargs['bounds'] = conv_bou
     kwargs.update({'server_name': 'place', 'version': 'v2', 'subserver_name': 'search',
                    'query': query.strip()})
-
     return client._get(kwargs)
 
 
 def place_detail(client, uid=None, uids=None, **kwargs):
     """Returns detail geographic information for uid.
-
     Assigns one and only one of arguments: 'uid', 'uids'. 
     More details is available here:
     http://lbsyun.baidu.com/index.php?title=webapi/guide/webservice-placeapi.
@@ -102,13 +99,11 @@ def place_detail(client, uid=None, uids=None, **kwargs):
                 \nuids = ('8ee4560cf91d160e6cc02cd7', '5ffb1816cf771a226f476058')")
         kwargs['uids'] = conv_uids
     kwargs.update({'server_name': 'place', 'version': 'v2', 'subserver_name': 'detail'})
-
     return client._get(kwargs)
 
 
 def place_suggest(client, query, region, **kwargs):
     """Returns place suggestions matched user's input.
-
     More details is available here:
     http://lbsyun.baidu.com/index.php?title=webapi/place-suggestion-api
 
@@ -137,13 +132,11 @@ def place_suggest(client, query, region, **kwargs):
 
     kwargs.update({'server_name': 'place', 'version': 'v2', 'subserver_name': 'suggestion',
                    'region': region.strip(), 'query': query.strip()})
-
     return client._get(kwargs)
 
 
-def geocode(client, address, **kwargs):
+def geo_code(client, address, **kwargs):
     """Returns place coordinate.
-
     More details is available here:
     http://lbsyun.baidu.com/index.php?title=webapi/guide/webservice-geocoding
 
@@ -158,13 +151,11 @@ def geocode(client, address, **kwargs):
     """
     kwargs.update({'server_name': 'geocoder', 'version': 'v2', 'subserver_name': '',
                    'address':address.strip()})
-
     return client._get(kwargs)
 
 
 def direct(client, origin, destination, mode='driving', region=None, **kwargs):
     """Returns information for 4 types of direction demand.
-
     More details is available here:
     http://lbsyun.baidu.com/index.php?title=webapi/direction-api-v2
 
@@ -221,12 +212,11 @@ def direct(client, origin, destination, mode='driving', region=None, **kwargs):
                          'walking', 'transit', 'riding'].")
 
     kwargs.update({'server_name': 'direction', 'origin': origin, 'destination': destination})
-
     return client._get(kwargs)
+
 
 def ip_locate(client, **kwargs):
     """Returns location for given ip or current ip.
-
     More details is available here:
     http://lbsyun.baidu.com/index.php?title=webapi/ip-api
 
@@ -239,13 +229,11 @@ def ip_locate(client, **kwargs):
     if 'ip' in kwargs:
         ip_check(kwargs['ip'])
     kwargs.update({'server_name': 'location', 'version': '', 'subserver_name': 'ip'})
-
     return client._get(kwargs)
 
 
 def route_matrix(client, origins, destinations, mode='driving', **kwargs):
-    """Returns multiple direction and time spent. 
-
+    """Returns multiple direction and time spent.
     More details is available here:
     http://lbsyun.baidu.com/index.php?title=webapi/route-matrix-api-v2
 
@@ -284,18 +272,16 @@ def route_matrix(client, origins, destinations, mode='driving', **kwargs):
                 \ndestinations = ((39.915, 116.404), (39.975, 116.414))")
     kwargs['destinations'] = conv_dess
 
-
     if mode not in ["driving", "walking", "riding"]:
-        raise ValueError("'mode' incorrect! It should in {'driving', 'walking', 'riding'}.") 
+        raise ValueError("'mode' incorrect! It should in {'driving', 'walking', 'riding'}.")
     else:
         kwargs.update({'server_name': 'routematrix', 'version': 'v2', 'subserver_name': mode,
                        'origins': origins, 'destinations': destinations})
-
     return client._get(kwargs)
 
-def geoconv(client, coords, **kwargs):
-    """Convert none-Baidu coordinate to Baidu's. 
 
+def geo_convert(client, coords, **kwargs):
+    """Convert none-Baidu coordinate to Baidu's.
     More details is available here:
     http://lbsyun.baidu.com/index.php?title=webapi/guide/changeposition
 
@@ -319,12 +305,11 @@ def geoconv(client, coords, **kwargs):
 
     kwargs.update({'server_name': 'geoconv', 'version': 'v1',
                   'subserver_name': '', 'coords': conv_coos})
-
     return client._get(kwargs)
+
 
 def time_zone(client, location, timestamp, **kwargs):
     """Return time zone of given location and offset.
-
     More details is available here:
     http://lbsyun.baidu.com/index.php?title=webapi/guide/timezone
 
@@ -347,12 +332,11 @@ def time_zone(client, location, timestamp, **kwargs):
             \nlocation = (39.915, 116.404)")
     kwargs.update({'server_name': 'timezone', 'version': 'v1', 'subserver_name': '',
                    'location': conv_loc, 'timestamp': timestamp})
-
     return client._get(kwargs)
 
-def boarding_point(client, location, timestamp, **kwargs):
-    """Return recommendatory boarding point of given location.
 
+def board_recommend(client, location, timestamp, **kwargs):
+    """Return recommendatory boarding point of given location.
     More details is available here:
     http://lbsyun.baidu.com/index.php?title=webapi/parking-api
 
@@ -375,5 +359,4 @@ def boarding_point(client, location, timestamp, **kwargs):
             \nlocation = (39.915, 116.404)")
     kwargs.update({'server_name': 'parking', 'version': '', 'subserver_name': 'search',
                    'location': conv_loc})
-
     return client._get(kwargs)

@@ -73,14 +73,16 @@ class Client(object):
 
 Client.place_search = apis.place_search
 Client.place_detail = apis.place_detail
-Client.place_eventsearch = apis.place_eventsearch
-Client.place_eventdetail = apis.place_eventdetail
+# Client.place_eventsearch = apis.place_eventsearch
+# Client.place_eventdetail = apis.place_eventdetail
 Client.place_suggest = apis.place_suggest
-Client.geocode = apis.geocode
+Client.geo_code = apis.geo_code
 Client.direct = apis.direct
 Client.ip_locate = apis.ip_locate
 Client.route_matrix = apis.route_matrix
-Client.geoconv = apis.geoconv
+Client.geo_convert = apis.geo_convert
+Client.time_zone = apis.time_zone
+Client.board_recommend = apis.board_recommend
 Client.parse = parse.parse
 
 
