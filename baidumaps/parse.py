@@ -10,19 +10,20 @@
 
 import xml.etree.ElementTree as ET
 
-from collections import defaultdict
+# from collections import OrderedDict
+from collections import OrderedDict
 import pandas as pd
 
 def parse_json(response):
     records = []
     jso = response.json()
-    ddct = defaultdict(str)
+    record = OrderedDict()
     def iter_dct(dct):
         for key, val in dct.items():
             if isinstance(val, dict):
                 iter_dct(val)
             else:
-                ddct[key] = val
+                record[key] = val
     try:
         dct_list = jso['results']
     except KeyError:
@@ -31,24 +32,24 @@ def parse_json(response):
             dct_list = [dct_list]
     for dct in dct_list:
         iter_dct(dct)
-        records.append(ddct.copy())
-        ddct.clear()
+        records.append(record.copy())
+        record.clear()
     return pd.DataFrame(records)
 
 def parse_xml(response):
     records = []
     root = ET.fromstring(response.text)
-    ddct = defaultdict(str)
+    record = OrderedDict()
     def iter_tree(parent):
         for son in parent:
             if len(son):
                 iter_tree(son)
             elif son.text:
-                ddct[son.tag] = son.text.strip()
+                record[son.tag] = son.text.strip()
     for parent in root.iter('result'):
         iter_tree(parent)
-        records.append(ddct.copy())
-        ddct.clear()
+        records.append(record.copy())
+        record.clear()
     return pd.DataFrame(records)
 
 
@@ -208,56 +209,123 @@ def parse_pel(response):
 
 
 if __name__ == '__main__':
-    import requests 
+    import requests
+    from collections import OrderedDict
 
     s = requests.Session()
     def parse_json(response):
-        records = []
-        jso = response.json()
-        ddct = defaultdict(str)
-        def iter_dct(dct):
+        record = OrderedDict()
+        def iter_dct(dct, prefix=''):
             for key, val in dct.items():
+                key_extend = prefix +'_' +key if prefix else key
                 if isinstance(val, dict):
-                    iter_dct(val)
+                    iter_dct(val, key_extend)
+                elif not val or key.lower() in ['status', 'message', 'info']:
+                    continue
                 else:
-                    ddct[key] = val
-        if 'results' in jso:
-            dct_list = jso['results']
-        elif 'result' in jso:
-            dct_list = jso['result']
-        elif 'recommendStops' in jso:
-            dct_list = jso['recommendStops']
-        elif 'content' in jso:
-            dct_list = jso['content']
+                    record[key_extend] = val
+
+        call_back = response.json()
+        records = []
+        columns = []
+        if 'results' in call_back:
+            dct_list = call_back['results']
+        elif 'result' in call_back:
+                dct_list = call_back['result']
+        elif 'recommendStops' in call_back: # for parking api
+            dct_list = call_back['recommendStops']
+        elif 'content' in call_back: # for location IP api
+            dct_list = call_back['content']
         else:
-            dct_list = jso
+            dct_list = call_back
+
         if isinstance(dct_list, dict):
             dct_list = [dct_list]
 
         for dct in dct_list:
             iter_dct(dct)
-            records.append(ddct.copy())
-            ddct.clear()
-        return pd.DataFrame(records)
+            copied = record.copy()
+            if set(columns).issubset(set(copied.keys())):
+                columns = list(copied.keys())
+            records.append(copied)
+            record.clear()
+        return pd.DataFrame(records, columns=columns)
 
     def parse_xml(response):
-        records = []
+        record = OrderedDict()
+        def iter_tree(parent, prefix=''):
+            for son in parent:
+                key_extend = prefix + '_' + son.tag if prefix else son.tag
+                if len(son):
+                    iter_tree(son, key_extend)
+                elif not son.text or son.tag.lower() in ['status', 'message', 'info']:
+                    continue
+                else:
+                    record[key_extend] = son.text.strip()
+
+        if 'place/v2/suggestion' in response.url or 'routematrix' in response.url:
+            url_ = response.url.replace('xml', 'json')
+            response = s.get(url_)
+            return parse_json(response)
+
         try:
-            root = ET.fromstring(response.text)
+            call_back = ET.fromstring(response.text)
         except :
             return parse_json(response)
-        ddct = defaultdict(str)
-        def iter_tree(parent):
-            for son in parent:
-                if len(son):
-                    iter_tree(son)
-                elif son.text:
-                    ddct[son.tag] = son.text.strip()
-        for parent in root.iter('result'):
+
+        records = []
+        columns = []
+        for parent in call_back.iter('result'):
             iter_tree(parent)
-            records.append(ddct.copy())
-            ddct.clear()
-        return pd.DataFrame(records)
+            copied = record.copy()
+            if set(columns).issubset(set(copied.keys())):
+                columns = list(copied.keys())
+            records.append(copied)
+            record.clear()
+        return pd.DataFrame(records, columns=columns)
+
+
+    def parse_direct(response):
+        record = OrderedDict()
+        def iter_dct(dct, prefix=''):
+            for key, val in dct.items():
+                key_extend = prefix+'_'+key if prefix else key
+                if isinstance(val, dict):
+                    iter_dct(val, key_extend)
+                elif not val or key.lower() in ['status', 'message', 'info']:
+                    continue
+                else:
+                    record[key_extend] = val
+
+        call_back = response.json()
+        result = call_back['result']
+        routes = result.pop('routes')
+        iter_dct(result)
+        copied = record.copy()
+        basic_df = pd.DataFrame([copied.values()], columns=copied.keys())
+        record.clear()
+
+        records = []
+        columns = []
+        for i, route in enumerate(routes):
+            steps = route.pop('steps')
+            route_i = {k: v for k, v in route.items() if v}
+            route_i.update({'route': i+1})
+            for j, step in enumerate(steps):
+                route_i.update({'step': j+1})
+                for l, sub_step in enumerate(step):
+                    route_i.update({'sub_step': l+1})
+                    iter_dct(sub_step)
+                    copied = record.copy()
+                    route_i.update(copied)
+                    if set(columns).issubset(set(copied.keys())):
+                        columns = list(copied.keys())
+                    records.append(route_i.copy())
+                    record.clear()
+        routes_df = pd.DataFrame(records,
+                                 columns=['route', 'step', 'sub_step'] + columns)
+        return basic_df, routes_df
+
 
     urls=["http://api.map.baidu.com/place/v2/search?query=ATM机&tag=银行&region=北京",
          "http://api.map.baidu.com/place/v2/search?query=银行&location=39.915,116.404&radius=2000",
