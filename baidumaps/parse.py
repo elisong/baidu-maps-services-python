@@ -211,6 +211,7 @@ def parse_pel(response):
 if __name__ == '__main__':
     import requests
     from collections import OrderedDict
+    import pandas as pd
 
     s = requests.Session()
     def parse_json(response):
@@ -220,7 +221,7 @@ if __name__ == '__main__':
                 key_extend = prefix +'_' +key if prefix else key
                 if isinstance(val, dict):
                     iter_dct(val, key_extend)
-                elif not val or key.lower() in ['status', 'message', 'info']:
+                elif not val or key.lower() in ['status', 'message', 'info', 'type']:
                     continue
                 else:
                     record[key_extend] = val
@@ -228,6 +229,7 @@ if __name__ == '__main__':
         call_back = response.json()
         records = []
         columns = []
+
         if 'results' in call_back:
             dct_list = call_back['results']
         elif 'result' in call_back:
@@ -258,7 +260,7 @@ if __name__ == '__main__':
                 key_extend = prefix + '_' + son.tag if prefix else son.tag
                 if len(son):
                     iter_tree(son, key_extend)
-                elif not son.text or son.tag.lower() in ['status', 'message', 'info']:
+                elif not son.text or son.tag.lower() in ['status', 'message', 'info', 'type']:
                     continue
                 else:
                     record[key_extend] = son.text.strip()
@@ -292,7 +294,7 @@ if __name__ == '__main__':
                 key_extend = prefix+'_'+key if prefix else key
                 if isinstance(val, dict):
                     iter_dct(val, key_extend)
-                elif not val or key.lower() in ['status', 'message', 'info']:
+                elif not val or key.lower() in ['status', 'message', 'info', 'type']:
                     continue
                 else:
                     record[key_extend] = val
@@ -311,19 +313,30 @@ if __name__ == '__main__':
             steps = route.pop('steps')
             route_i = {k: v for k, v in route.items() if v}
             route_i.update({'route': i+1})
+            tmp_col = list(route.keys())
             for j, step in enumerate(steps):
                 route_i.update({'step': j+1})
-                for l, sub_step in enumerate(step):
-                    route_i.update({'sub_step': l+1})
-                    iter_dct(sub_step)
+                if isinstance(step, list):
+                    for l, sub_step in enumerate(step):
+                        route_i.update({'sub_step': l+1})
+                        iter_dct(sub_step)
+                        copied = record.copy()
+                        route_i.update(copied)
+                        tmp_col.extend(['route', 'step', 'sub_step']+list(copied.keys()))
+                        if set(columns).issubset(set(tmp_col)):
+                            columns = tmp_col
+                        records.append(route_i.copy())
+                        record.clear()
+                else:
+                    iter_dct(step)
                     copied = record.copy()
                     route_i.update(copied)
-                    if set(columns).issubset(set(copied.keys())):
-                        columns = list(copied.keys())
+                    tmp_col.extend(['route', 'step'] + list(copied.keys()))
+                    if set(columns).issubset(set(tmp_col)):
+                        columns = tmp_col
                     records.append(route_i.copy())
                     record.clear()
-        routes_df = pd.DataFrame(records,
-                                 columns=['route', 'step', 'sub_step'] + columns)
+        routes_df = pd.DataFrame(records, columns=columns)
         return basic_df, routes_df
 
 
