@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # The MIT License (MIT)
-# Copyright © 2015-2018 Eli Song<elisong.ah@gmail.com>
+# Copyright © 2015-2018 Eli Song <elisong.ah@gmail.com>
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -60,7 +60,8 @@ class Client(object):
         api = re.sub(r'//ip', '/ip', api)  # for ip_locate()
         temp = params.copy()
         {temp.pop(key) for key in ['server_name', 'version', 'subserver_name']}
-        temp.update({'output': params.get('output', self.output), 'ak': self.ak})
+        self.output = params.get('output', self.output)
+        temp.update({'output': self.output, 'ak': self.ak})
         query = api + urlencode(temp)
         if self.sk:
             quoted = quote(query, safe="/:=&?#+!$,;'@()*[]") + self.sk
